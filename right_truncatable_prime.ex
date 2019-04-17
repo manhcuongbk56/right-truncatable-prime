@@ -1,6 +1,9 @@
 defmodule Prime do
   use Bitwise, only_operators: true
 
+  def is_prime?(2, _t) do
+    true
+  end
   def is_prime?(n, _t) when n != 2 and rem(n, 2)== 0 do
     false
   end
@@ -63,17 +66,36 @@ defmodule LargestRightTruncatePrime do
   @a  [2, 3, 5, 7]
   @ak  [1, 3, 7, 9]
   def max_satisfy (n) do
-    num_number = floor(:math.log10(n))
-    ables = for i <- 1..num_number, a <- @a, ak <- @ak, do: calculate(i, a, ak)
-    Enum.filter(ables, &(Prime.is_prime?(&1) and (&1 <= n))) |> Enum.take(-1)
-
+    num_number = Kernel.trunc(:math.log10(n))
+    IO.puts inspect num_number
+    IO.puts inspect @a
+    IO.puts inspect @ak
+    ables = for i <- 1..num_number, a <- @a, ak <- @ak do
+      calculate(i, a, ak)
+    end
+    IO.puts length(ables)
+    IO.puts inspect ables
+    filtered = Enum.filter(ables, &(&1 != 0 and (&1 <= n)))
+    IO.puts inspect filtered
+    result = Enum.take(filtered, -1)
+    result
   end
-  def calculate(i,a, _ak) when i == 0, do: a
+  def calculate(0,a, _ak) do
+    IO.puts a
+    if Prime.is_prime? a do
+      a
+    else
+      0
+    end
+  end
+  def calculate(_,0, _ak), do: 0
   def calculate(i,a, ak) do
+    IO.puts a
     if Prime.is_prime? a do
       calculate(i - 1, a * 10 + ak, ak)
+    else
+      0
     end
-    0
   end
   def is_satisfy(p, n) do
     Prime.is_prime?(p) and p <= n
